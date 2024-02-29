@@ -2,8 +2,8 @@
 =========================================================
 Name        : lab6_exe_D.html
 Assignment  : Lab 6, Exercise D
-Author(s)   : Mahdi Ansari, William Arthur Philip Louis
-Submission  : May 21, 2030
+Author(s)   : Zayn Dias, Trung Tuan Mai
+Submission  : Feb 28, 2024
 Description : API Usage.
 =========================================================
 -->
@@ -47,13 +47,52 @@ Description : API Usage.
     <script>
         // Function to fetch and display students
         async function fetchStudents() {
-            
+            fetch("https://65dfcb72ff5e305f32a3285a.mockapi.io/students")
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                let studentList = document.getElementById("studentList");
+                data.forEach(student => {
+                    let student_data = document.createElement("li");
+                    student_data.innerText = student.name;
+                    student_data.addEventListener('click', () => fetchCourses(student.id));
+                    studentList.appendChild(student_data);
+                });
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
         }
 
         // Function to fetch and display courses for a student
+        
         async function fetchCourses(studentId) {
-            
-        }
+            fetch("https://65dfcb72ff5e305f32a3285a.mockapi.io/students/" + studentId + "/courses")
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                let courseList = document.getElementById("courseList");
+                courseList.innerHTML = '';
+                data.forEach(course => {
+                let courseItem = document.createElement("li");
+                courseItem.innerText = `${course.name} (Unit: ${course.unit})`;
+                courseList.appendChild(courseItem);
+            });
+        })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
 
         // Fetch students on window load
         window.onload = fetchStudents;
